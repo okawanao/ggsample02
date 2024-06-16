@@ -133,7 +133,7 @@ static GLuint createProgram(const char* vsrc, const char* pv, const char* fsrc, 
 //   index: 線分の頂点インデックス
 //   戻り値: 作成された頂点配列オブジェクト名
 //
-static GLuint createObject(GLuint vertices, const GLfloat(*position)[2], GLuint lines, const GLuint* index)
+static GLuint createObject(GLuint vertices, const GLfloat(*position)[3], GLuint lines, const GLuint* index)
 {
   // 頂点配列オブジェクト
   GLuint vao;
@@ -144,7 +144,7 @@ static GLuint createObject(GLuint vertices, const GLfloat(*position)[2], GLuint 
   GLuint vbo;
   glGenBuffers(1, &vbo);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat[2]) * vertices, position, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat[3]) * vertices, position, GL_STATIC_DRAW);
 
   // インデックスバッファオブジェクト
   GLuint ibo;
@@ -153,7 +153,7 @@ static GLuint createObject(GLuint vertices, const GLfloat(*position)[2], GLuint 
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * lines, index, GL_STATIC_DRAW);
 
   // 結合されている頂点バッファオブジェクトを in 変数から参照できるようにする
-  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(0);
 
   // 頂点配列オブジェクトの結合を解除した後に頂点バッファオブジェクトとインデックスバッファオブジェクトの結合を解除する
@@ -201,12 +201,16 @@ int GgApp::main(int argc, const char* const* argv)
   const auto program{ createProgram(vsrc, "pv", fsrc, "fc") };
 
   // 頂点属性
-  static const GLfloat position[][2]
+  static const GLfloat position[][3]
   {
-    { -0.5f, -0.5f },
-    {  0.5f, -0.5f },
-    {  0.5f,  0.5f },
-    { -0.5f,  0.5f }
+    {  0.9f,  0.9f,  0.9f },
+    { -0.9f,  0.9f,  0.9f },
+    { -0.9f,  0.9f, -0.9f },
+    {  0.9f,  0.9f, -0.9f },
+    {  0.9f, -0.9f, -0.9f },
+    {  0.9f, -0.9f,  0.9f },
+    { -0.9f, -0.9f,  0.9f },
+    { -0.9f, -0.9f, -0.9f },
   };
 
   // 頂点数
@@ -215,7 +219,12 @@ int GgApp::main(int argc, const char* const* argv)
   // 頂点インデックス
   static const GLuint index[]
   {
-    0, 2, 1, 3
+    0, 1, 2, 3,
+    0, 1, 6, 7,
+    5, 4, 7, 6,
+    5, 4, 3, 2,
+    4, 3, 0, 7,
+    1, 2, 5, 6
   };
 
   // 稜線数
